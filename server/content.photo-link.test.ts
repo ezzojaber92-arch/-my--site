@@ -67,6 +67,20 @@ describe("ربط صورة المنشور بسجل البعير", () => {
     dbMocks.listCamelProductionLinks.mockResolvedValue([]);
   });
 
+  it("يقبل رابط التخزين المحلي الناتج من رفع صورة المعرض ويحفظه", async () => {
+    const caller = appRouter.createCaller(createAdminContext());
+    const photo = {
+      camelRecordId: 2,
+      imageUrl: "/manus-storage/reserve/100/camels/new-photo.jpg",
+      mediaKey: "reserve/100/camels/new-photo.jpg",
+      sortOrder: 0,
+    };
+
+    await caller.camelPhotos.create(photo);
+
+    expect(dbMocks.createCamelPhoto).toHaveBeenCalledWith(photo);
+  });
+
   it("يضيف صورة المنشور المرتبطة ببعير إلى معرضه تلقائياً", async () => {
     const caller = appRouter.createCaller(createAdminContext());
     await caller.content.create({

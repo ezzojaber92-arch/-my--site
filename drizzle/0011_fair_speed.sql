@@ -1,0 +1,1 @@
+ALTER TABLE `camel_records` ADD `subscription_url` varchar(1024);

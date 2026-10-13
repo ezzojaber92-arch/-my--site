@@ -1,8 +1,8 @@
 export const CELEBRATION_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 export function isCelebrationActive(publishedAt: Date | string, now: number) {
-  const elapsed = now - new Date(publishedAt).getTime();
-  return elapsed >= 0 && elapsed < CELEBRATION_WINDOW_MS;
+  // التهنئة تبقى ظاهرة حتى تغيّرها الإدارة أو تحذفها؛ الناشر المستقبلي فقط لا يظهر بعد.
+  return now >= new Date(publishedAt).getTime();
 }
 
 export function getCelebrationHoursRemaining(publishedAt: Date | string, now: number) {

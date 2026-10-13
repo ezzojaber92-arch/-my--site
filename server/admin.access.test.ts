@@ -1,4 +1,15 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+const engagementMocks = vi.hoisted(() => ({
+  toggleContentLike: vi.fn(),
+  addContentComment: vi.fn(),
+}));
+
+vi.mock("./db", async () => {
+  const actual = await vi.importActual<typeof import("./db")>("./db");
+  return { ...actual, ...engagementMocks };
+});
+
 import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
 
@@ -43,6 +54,7 @@ function createAnonymousContext(): TrpcContext {
     user: null,
     req: { protocol: "https", headers: {} } as TrpcContext["req"],
     res: { clearCookie: () => undefined } as TrpcContext["res"],
+    visitorToken: "guest-token-123456",
   };
 }
 
@@ -75,10 +87,14 @@ describe("لوحة إدارة المحمية", () => {
     await expect(caller.camelProductionLinks.remove({ id: 1 })).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
-  it("يتطلب تسجيل الدخول قبل الإعجاب أو إضافة تعليق", async () => {
+  it("يسمح للزائر بالتفاعل العام مع بقاء الإدارة محمية", async () => {
+    engagementMocks.toggleContentLike.mockResolvedValueOnce({ liked: true });
+    engagementMocks.addContentComment.mockResolvedValueOnce({ inserted: true });
     const caller = appRouter.createCaller(createAnonymousContext());
-    await expect(caller.content.toggleLike({ contentItemId: 1 })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
-    await expect(caller.content.addComment({ contentItemId: 1, body: "تعليق تجريبي" })).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(caller.content.toggleLike({ contentItemId: 1 })).resolves.toEqual({ liked: true });
+    await expect(caller.content.addComment({ contentItemId: 1, body: "تعليق عام" })).resolves.toEqual({ inserted: true });
+    expect(engagementMocks.toggleContentLike).toHaveBeenCalledWith(1, undefined, "guest-token-123456");
+    expect(engagementMocks.addContentComment).toHaveBeenCalledWith(1, undefined, "تعليق عام", "guest-token-123456");
   });
 
   it("تمنع المستخدم غير الإداري من إضافة بريد مسؤول أو الاطلاع على المسؤولين", async () => {
@@ -105,7 +121,7 @@ describe("لوحة إدارة المحمية", () => {
 
   it("تمنع حفظ تكبير أو تدوير صورة البعير خارج النطاق الآمن", async () => {
     const caller = appRouter.createCaller(createAdminContext());
-    await expect(caller.camel.update({ id: 1, values: { imageScale: 181 } })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    await expect(caller.camel.update({ id: 1, values: { imageScale: 221 } })).rejects.toMatchObject({ code: "BAD_REQUEST" });
     await expect(caller.camel.update({ id: 1, values: { imageRotation: 181 } })).rejects.toMatchObject({ code: "BAD_REQUEST" });
   });
 });

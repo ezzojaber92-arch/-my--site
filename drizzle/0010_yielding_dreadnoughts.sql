@@ -1,0 +1,1 @@
+ALTER TABLE `camel_production_links` MODIFY COLUMN `url` varchar(512) NOT NULL;

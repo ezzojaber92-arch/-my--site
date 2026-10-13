@@ -1,0 +1,57 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+
+describe("معرض صور سجل البعير", () => {
+  it("يعرض صورة رئيسية كاملة مع سهم ونقاط صغيرة بدلاً من المصغرات", () => {
+    const page = readFileSync(new URL("./Home.tsx", import.meta.url), "utf8");
+    const styles = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+
+    expect(page).toContain('className="camel-gallery-navigation"');
+    expect(page).toContain('onClick={() => selectCamelGalleryImage(index)}');
+    expect(page).not.toContain('className="gallery-direct-controls"');
+    expect(page).toContain('getTouchDistance(event.touches)');
+    expect(page).toContain('setCamelImageZoom(nextZoom)');
+    expect(page).toContain('aria-label="كبّر الصورة بإصبعين، واسحب بإصبع لتحريكها عند التكبير"');
+    expect(page).toContain('camelSwipeOffset');
+    expect(page).toContain('camelSwipePreviewImage');
+    expect(page).toContain('getCyclicGalleryIndex');
+    expect(page).toContain('const travel = direction === 1 ? -1 : 1;');
+    expect(page).toContain('moveCamelGalleryImage(direction);');
+    expect(page).toContain('const CAMEL_SWIPE_DURATION_MS = 220;');
+    expect(page).toContain('camelSwipeAnimationTimer.current = window.setTimeout');
+    expect(page).toContain('cancelCamelSwipeMotion');
+    expect(page).toContain('camelSwipeTransition');
+    expect(page).toContain('transform ${CAMEL_SWIPE_DURATION_MS}ms cubic-bezier(0.23, 1, 0.32, 1)');
+    expect(page).not.toContain('className="camel-image-controls"');
+    expect(page).not.toContain('aria-label="أدوات تكبير الصورة"');
+    expect(page).toContain('className="camel-swipe-image"');
+    expect(styles).toContain('transition: transform .22s cubic-bezier(.23,1,.32,1);');
+    expect(styles).toContain('.camel-dialog-media-stack .dialog-image { width: 100% !important; height: auto !important; min-height: 0 !important; max-height: none !important; flex: none; aspect-ratio: 4 / 3 !important;');
+    expect(styles).toContain('.camel-dialog-media-stack .dialog-image, .dialog-image { width: 100% !important; height: auto !important; min-height: 0 !important; max-height: none !important; flex: none; aspect-ratio: 4 / 3 !important;');
+    expect(styles).toContain('.dialog-image .camel-swipe-image { position: absolute; inset: 0; display: block;');
+    expect(styles).toContain('.dialog-image { position: relative;');
+    expect(styles).toContain('touch-action: none;');
+    expect(styles).toContain('width: 100% !important; height: 100% !important; min-width: 0; min-height: 0;');
+    expect(styles).toContain('object-position: center;');
+    expect(page).toContain('className="camel-photo-wrap camel-photo-frame camel-photo-button"');
+    expect(styles).toContain('.camel-photo-wrap { height: auto; aspect-ratio: 4 / 3;');
+    expect(styles).toContain('.camel-photo-frame {');
+    expect(styles).toContain('.camel-photo-frame > .camel-photo');
+    expect(styles).toContain('object-fit: contain !important;');
+    expect(styles).toContain('.camel-card-1 .camel-photo-wrap { height: auto; aspect-ratio: 4 / 3;');
+    expect(styles).toContain('.camel-photo { width: 100%; height: 100%; object-fit: cover; object-position: center;');
+    expect(styles).toContain('.camel-photo-frame,\n.camel-dialog-media-stack .dialog-image,\n.dialog-image {');
+    expect(styles).toContain('object-fit: contain !important;');
+    expect(styles).toContain('height: 100% !important;');
+    expect(styles).toContain('.dialog-image:not(.is-primary) img { object-fit: contain !important; }');
+    expect(styles).toContain('.dialog-image::before');
+    expect(styles).toContain('-webkit-user-drag: none;');
+    expect(styles).toContain('.camel-gallery-navigation { display: flex;');
+    expect(styles).toContain('.camel-gallery-arrow {');
+    expect(styles).toContain('.camel-gallery-dots {');
+    expect(styles).toContain('.camel-gallery-dots button.is-active');
+    expect(styles).not.toContain('.camel-gallery-thumbnails button');
+    expect(styles).not.toContain('.camel-gallery-thumbnails img');
+    expect(styles).toContain('aspect-ratio: 4 / 3 !important;');
+  });
+});

@@ -1,0 +1,1 @@
+ALTER TABLE `admin_email_access` ADD `password_hash` varchar(255);

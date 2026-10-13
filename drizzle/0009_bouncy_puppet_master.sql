@@ -1,0 +1,1 @@
+ALTER TABLE `camel_production_links` ADD `title` varchar(255) DEFAULT 'رابط إنتاج' NOT NULL;

@@ -1,0 +1,2 @@
+ALTER TABLE `camel_photos` MODIFY COLUMN `image_url` varchar(512) NOT NULL;--> statement-breakpoint
+ALTER TABLE `camel_photos` ADD CONSTRAINT `camel_photos_camel_image_unique` UNIQUE(`camel_record_id`,`image_url`);

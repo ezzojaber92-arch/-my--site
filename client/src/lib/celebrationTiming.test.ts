@@ -9,8 +9,9 @@ describe("مدة ظهور التهنئة", () => {
     expect(isCelebrationActive(publishedAt, publishedTime + 23 * 60 * 60 * 1000)).toBe(true);
   });
 
-  it("تنتقل التهنئة إلى الأرشيف عند اكتمال 24 ساعة", () => {
-    expect(isCelebrationActive(publishedAt, publishedTime + CELEBRATION_WINDOW_MS)).toBe(false);
+  it("تبقى التهنئة ظاهرة بعد اكتمال 24 ساعة حتى تغيّرها الإدارة أو تحذفها", () => {
+    expect(isCelebrationActive(publishedAt, publishedTime + CELEBRATION_WINDOW_MS)).toBe(true);
+    expect(isCelebrationActive(publishedAt, publishedTime + 7 * 24 * 60 * 60 * 1000)).toBe(true);
   });
 
   it("يعرض الساعات المتبقية بالتقريب لأعلى", () => {

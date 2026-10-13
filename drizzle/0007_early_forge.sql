@@ -1,0 +1,1 @@
+ALTER TABLE `content_items` MODIFY COLUMN `content_kind` enum('news','announcement','celebration','photo','video') NOT NULL;

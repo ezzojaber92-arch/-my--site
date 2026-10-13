@@ -22,23 +22,22 @@ export function ThemeProvider({
   switchable = false,
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (switchable) {
-      const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
-    }
-    return defaultTheme;
+    // The public site is intentionally light-only. A switchable provider can
+    // still opt into the previous preference-based behavior for isolated tools.
+    if (!switchable) return "light";
+    const stored = localStorage.getItem("theme");
+    return stored === "dark" || stored === "light" ? stored : defaultTheme;
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+    const activeTheme: Theme = switchable ? theme : "light";
+
+    root.classList.toggle("dark", activeTheme === "dark");
+    root.style.colorScheme = activeTheme;
 
     if (switchable) {
-      localStorage.setItem("theme", theme);
+      localStorage.setItem("theme", activeTheme);
     }
   }, [theme, switchable]);
 
@@ -49,7 +48,7 @@ export function ThemeProvider({
     : undefined;
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, switchable }}>
+    <ThemeContext.Provider value={{ theme: switchable ? theme : "light", toggleTheme, switchable }}>
       {children}
     </ThemeContext.Provider>
   );
